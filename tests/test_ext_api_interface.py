@@ -30,3 +30,83 @@ class TestExtApiInterface(unittest.TestCase):
     def test_get_ebooks(self):
         self.api.make_request = Mock(return_value=self.json_data)
         self.assertEqual(self.api.get_ebooks(self.book), self.books_data)
+
+
+    # ----------| My Tests |----------
+
+    def test_is_book_available_no_results(self):
+        self.api.make_request = Mock(return_value={"docs": []})
+        self.assertFalse(self.api.is_book_available(self.book))
+
+    def test_is_book_available_error(self):
+        self.api.make_request = Mock(return_value=None)
+        self.assertFalse(self.api.is_book_available(self.book))
+
+    def test_books_by_author_no_results(self):
+        self.api.make_request = Mock(return_value={"docs": []})
+        self.assertEqual(self.api.books_by_author("Nonexistent Author"), [])
+
+    def test_get_book_info_no_results(self):
+        self.api.make_request = Mock(return_value={"docs": []})
+        self.assertEqual(self.api.get_book_info(self.book), [])
+
+    def test_get_book_info_error(self):
+        self.api.make_request = Mock(return_value=None)
+        self.assertEqual(self.api.get_book_info(self.book), [])
+
+    def test_get_ebooks_no_results(self):
+        self.api.make_request = Mock(return_value={"docs": []})
+        self.assertEqual(self.api.get_ebooks(self.book), [])
+
+    def test_get_ebooks_error(self):
+        self.api.make_request = Mock(return_value=None)
+        self.assertEqual(self.api.get_ebooks(self.book), [])
+
+    def test_is_book_available_empty_string(self):
+        self.assertFalse(self.api.is_book_available(""))
+
+    def test_books_by_author_empty_string(self):
+        self.assertEqual(self.api.books_by_author(""), [])
+
+    def test_get_book_info_empty_string(self):
+        self.assertEqual(self.api.get_book_info(""), [])
+
+    def test_get_ebooks_empty_string(self):
+        self.assertEqual(self.api.get_ebooks(""), [])
+
+    def test_get_book_info_with_all_fields(self):
+        self.api.make_request = Mock(return_value={
+            "docs": [{
+                "title": "Test Book",
+                "publisher": "Test Publisher",
+                "publish_year": 2022,
+                "language": "en"
+            }]
+        })
+        expected_result = [{
+            "title": "Test Book",
+            "publisher": "Test Publisher",
+            "publish_year": 2022,
+            "language": "en"
+        }]
+        self.assertEqual(self.api.get_book_info("Test Book"), expected_result)
+
+    def test_get_book_info_with_missing_fields(self):
+        self.api.make_request = Mock(return_value={
+            "docs": [{
+                "title": "Test Book",
+                "publish_year": 2022
+            }]
+        })
+        expected_result = [{
+            "title": "Test Book",
+            "publish_year": 2022
+        }]
+        self.assertEqual(self.api.get_book_info("Test Book"), expected_result)
+
+    def test_get_book_info_with_no_results(self):
+        self.api.make_request = Mock(return_value={
+            "docs": []
+        })
+        expected_result = []
+        self.assertEqual(self.api.get_book_info("Nonexistent Book"), expected_result)
