@@ -7,7 +7,7 @@ import json
 class TestExtApiInterface(unittest.TestCase):
     def setUp(self):
         self.api = ext_api_interface.Books_API()
-        self.book = "learning python"
+        self.book = "Learning Python (Learning)"
         with open('tests_data/ebooks.txt', 'r') as f:
             self.books_data = json.loads(f.read())
         with open('tests_data/json_data.txt', 'r') as f:
@@ -33,6 +33,26 @@ class TestExtApiInterface(unittest.TestCase):
 
 
     # ----------| My Tests |----------
+
+    def test_is_book_available_with_available_book(self):
+        self.api.make_request = Mock(return_value=self.json_data)
+        result = self.api.is_book_available(self.book)
+        self.assertTrue(result)
+
+    def test_is_book_available_with_unavailable_book(self):
+        self.api.make_request = Mock(return_value={'docs': []})
+        result = self.api.is_book_available(self.book)
+        self.assertFalse(result)
+
+    def test_books_by_author_with_results(self):
+        self.api.make_request = Mock(return_value=self.json_data)
+        result = self.api.books_by_author('Fabrizio Romano')
+        self.assertTrue("Learning Python (Learning)" in result)
+
+    def test_books_by_author_with_no_results(self):
+        self.api.make_request = Mock(return_value={'docs': []})
+        result = self.api.books_by_author('Not an Author')
+        self.assertListEqual(result, [])
 
     def test_is_book_available_no_results(self):
         self.api.make_request = Mock(return_value={"docs": []})
