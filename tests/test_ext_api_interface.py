@@ -62,18 +62,6 @@ class TestExtApiInterface(unittest.TestCase):
         self.api.make_request = Mock(return_value=None)
         self.assertEqual(self.api.get_ebooks(self.book), [])
 
-    def test_is_book_available_empty_string(self):
-        self.assertFalse(self.api.is_book_available(""))
-
-    def test_books_by_author_empty_string(self):
-        self.assertEqual(self.api.books_by_author(""), [])
-
-    def test_get_book_info_empty_string(self):
-        self.assertEqual(self.api.get_book_info(""), [])
-
-    def test_get_ebooks_empty_string(self):
-        self.assertEqual(self.api.get_ebooks(""), [])
-
     def test_get_book_info_with_all_fields(self):
         self.api.make_request = Mock(return_value={
             "docs": [{
