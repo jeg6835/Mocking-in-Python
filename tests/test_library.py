@@ -88,5 +88,5 @@ class TestLibrary(unittest.TestCase):
         lname = 'Joe'
         age = 28
         memberID = 'testID'
-        self.lib.db.insert_patron = Mock(return_value=None)
-        self.assertEqual(self.lib.register_patron(fname, lname, age, memberID), None)   
+        self.lib.db.insert_patron = Mock(return_value=memberID)
+        self.assertNotEqual(self.lib.register_patron(fname, lname, age, memberID), None)   
