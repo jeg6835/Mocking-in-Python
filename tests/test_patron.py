@@ -13,6 +13,16 @@ class TestPatron(unittest.TestCase):
     def test_invalid_name(self):
         self.assertRaises(patron.InvalidNameException, patron.Patron, '1fname', '1lname', '20', '1234')
     
+    def test_invalid_name_exception_string(self):
+        with self.assertRaisesRegex(patron.InvalidNameException, '^Name should not contain numbers$'):
+            patron.Patron('1fname', '1lname', '20', '1234')
+
+    def test_invalid_name_fname(self):
+        self.assertRaises(patron.InvalidNameException, patron.Patron, '1fname', 'lname', '20', '1234')
+
+    def test_invalid_name_lname(self):
+        self.assertRaises(patron.InvalidNameException, patron.Patron, 'fname', '1lname', '20', '1234')
+
     def test_add_borrowed_book_not_in(self):
         self.pat.add_borrowed_book("test1")
         self.assertEqual(self.pat.borrowed_books, ["test1"])
