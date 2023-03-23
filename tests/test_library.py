@@ -65,13 +65,13 @@ class TestLibrary(unittest.TestCase):
         patron = Mock()
         patron.add_borrowed_book= Mock()
         self.lib.db.update_patron = Mock(return_value=patron)
-        self.assertEquals(self.lib.borrow_book('Test book', patron), None) 
+        self.assertEqual(self.lib.borrow_book('Test book', patron), None) 
 
     def test_return_borrow_book(self):
         patron = Mock()
         patron.add_borrowed_book = Mock()
         self.lib.db.update_patron = Mock(return_value=patron)
-        self.assertEquals(self.lib.return_borrowed_book('Test Book', patron), None) 
+        self.assertEqual(self.lib.return_borrowed_book('Test Book', patron), None) 
 
     def test_is_book_borrowed_True(self):
         patron = Mock()
@@ -82,3 +82,11 @@ class TestLibrary(unittest.TestCase):
         patron = Mock()
         patron.get_borrowed_books = Mock(return_value={'test book', 'test book 2'})
         self.assertFalse(self.lib.is_book_borrowed('Test Book 3', patron))  
+
+    def test_register_patron_already_in_database(self):
+        fname = 'Larry'
+        lname = 'Joe'
+        age = 28
+        memberID = 'testID'
+        self.lib.db.insert_patron = Mock(return_value=memberID)
+        self.assertNotEqual(self.lib.register_patron(fname, lname, age, memberID), None)   

@@ -118,3 +118,6 @@ class TestExtApiInterface(unittest.TestCase):
         })
         expected_result = []
         self.assertEqual(self.api.get_book_info("Nonexistent Book"), expected_result)
+
+    def test_api_url(self):
+        self.assertEqual(self.api.API_URL, "http://openlibrary.org/search.json")
