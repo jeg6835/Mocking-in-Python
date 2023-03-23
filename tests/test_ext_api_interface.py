@@ -131,3 +131,8 @@ class TestExtApiInterface(unittest.TestCase):
         self.api.make_request = Mock(return_value={'docs': [{'title': 'Single Book'}]})
         result = self.api.is_book_available('Single Book')
         self.assertTrue(result)
+
+    def test_books_by_author_request_url_construction(self):
+        self.api.make_request = Mock(return_value=self.json_data)
+        self.api.books_by_author('Fabrizio Romano')
+        self.api.make_request.assert_called_with("http://openlibrary.org/search.json?author=Fabrizio Romano")
