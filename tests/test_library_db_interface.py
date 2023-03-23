@@ -25,6 +25,17 @@ class TestLibbraryDBInterface(unittest.TestCase):
         self.db_interface.update_patron(Mock())
         db_update_mock.assert_called()
 
+    def test_update_patron_with_none_check(self):
+
+        def side_effect_function(data, query):
+            if (data == None): return l
+        data = {'fname': 'name', 'lname': 'name', 'age': 'age', 'memberID': 'memberID',
+                'borrowed_books': []}
+        self.db_interface.convert_patron_to_db_format = Mock(return_value=data)
+        self.db_interface.db.update = Mock(side_effect=side_effect_function)
+        self.db_interface.update_patron(Mock())
+        self.db_interface.db.update.assert_called()
+        
     def test_convert_patron_to_db_format(self):
         patron_mock = Mock()
 
