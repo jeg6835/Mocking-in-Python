@@ -31,6 +31,19 @@ class TestExtApiInterface(unittest.TestCase):
         self.api.make_request = Mock(return_value=self.json_data)
         self.assertEqual(self.api.get_ebooks(self.book), self.books_data)
 
+    def test_get_ebooks_with_none_check(self):
+        def side_effect_function(value):
+            if (value == None):
+                return None
+            return self.json_data
+        self.api.make_request = Mock(side_effect=side_effect_function)
+        self.assertEqual(self.api.get_ebooks(self.book), self.books_data)
+
+    def test_get_ebooks_with_request_url_construction(self):
+        self.api.make_request = Mock(return_value=self.json_data)
+        self.api.get_ebooks(self.book)
+        self.api.make_request.assert_called_with("http://openlibrary.org/search.json?q=Learning Python (Learning)")
+
 
     # ----------| My Tests |----------
 
