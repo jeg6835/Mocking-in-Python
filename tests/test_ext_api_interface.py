@@ -121,3 +121,8 @@ class TestExtApiInterface(unittest.TestCase):
 
     def test_api_url(self):
         self.assertEqual(self.api.API_URL, "http://openlibrary.org/search.json")
+    
+    def test_request_url_construction(self):
+        self.api.make_request = Mock(return_value=self.json_data)
+        self.api.is_book_available(self.book)
+        self.api.make_request.assert_called_with("http://openlibrary.org/search.json?q=Learning Python (Learning)")
