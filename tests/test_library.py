@@ -15,6 +15,10 @@ class TestLibrary(unittest.TestCase):
         self.lib.api.get_ebooks = Mock(return_value=self.books_data)
         self.assertTrue(self.lib.is_ebook('learning python'))
 
+    def test_is_ebook_true_one_book_in_ebooks_api(self):
+        self.lib.api.get_ebooks = Mock(return_value=[{"title": "Learning Python", "ebook_count": 3}])
+        self.assertTrue(self.lib.is_ebook('learning python'))
+
     def test_get_ebooks_count(self):
         self.lib.api.get_ebooks = Mock(return_value=self.books_data)
         self.assertEqual(self.lib.get_ebooks_count("learning python"), 8)
@@ -84,9 +88,13 @@ class TestLibrary(unittest.TestCase):
         self.assertFalse(self.lib.is_book_borrowed('Test Book 3', patron))  
 
     def test_register_patron_already_in_database(self):
+        def side_effect_function(patron):
+            return patron.memberID
+
         fname = 'Larry'
         lname = 'Joe'
         age = 28
         memberID = 'testID'
-        self.lib.db.insert_patron = Mock(return_value=memberID)
-        self.assertNotEqual(self.lib.register_patron(fname, lname, age, memberID), None)   
+        
+        self.lib.db.insert_patron = Mock(side_effect=side_effect_function)
+        self.assertEqual(self.lib.register_patron(fname, lname, age, memberID), memberID) 
