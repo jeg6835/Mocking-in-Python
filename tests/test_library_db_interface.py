@@ -100,3 +100,6 @@ class TestLibbraryDBInterface(unittest.TestCase):
         self.db_interface.db.close() # close "real" db before swapping mock in
         self.db_interface.db = db_mock
         self.assertEqual(self.db_interface.retrieve_patron("memberID"), patron_data)
+
+    def test_db_filename(self):
+        self.assertEqual(self.db_interface.DATABASE_FILE, 'db.json')
