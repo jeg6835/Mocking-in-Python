@@ -103,3 +103,13 @@ class TestLibbraryDBInterface(unittest.TestCase):
 
     def test_db_filename(self):
         self.assertEqual(self.db_interface.DATABASE_FILE, 'db.json')
+    
+    def test_insert_patron_calls_convert_patron_to_db_format(self):
+        patron_mock = Mock()
+        self.db_interface.retrieve_patron = Mock(return_value=None)
+        convert_patron_to_db_format_mock = Mock(return_value={'fname': 'name', 'lname': 'name', 
+            'age': 'age', 'memberID': 'memberID', 'borrowed_books': []})
+        self.db_interface.convert_patron_to_db_format = convert_patron_to_db_format_mock
+        self.db_interface.db.insert = Mock(return_value=10)
+        self.db_interface.insert_patron(patron_mock)
+        convert_patron_to_db_format_mock.assert_called_once_with(patron_mock)
