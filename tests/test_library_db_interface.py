@@ -25,10 +25,11 @@ class TestLibbraryDBInterface(unittest.TestCase):
         self.db_interface.update_patron(Mock())
         db_update_mock.assert_called()
 
-    def test_update_patron_with_none_check(self):
+    def test_update_patron_with_none_and_query_check(self):
 
         def side_effect_function(data, query):
-            if (data == None): return l
+            if (data == None or '==' not in query.hashval): return l
+
         data = {'fname': 'name', 'lname': 'name', 'age': 'age', 'memberID': 'memberID',
                 'borrowed_books': []}
         self.db_interface.convert_patron_to_db_format = Mock(return_value=data)
@@ -111,6 +112,21 @@ class TestLibbraryDBInterface(unittest.TestCase):
         self.db_interface.db.close() # close "real" db before swapping mock in
         self.db_interface.db = db_mock
         self.assertEqual(self.db_interface.retrieve_patron("memberID"), patron_data)
+
+    def test_search_with_query_check(self):
+
+        patron_data = {'fname': 'name', 'lname': 'name', 'age': 'age', 'memberID': 'memberID',
+                'borrowed_books': []}
+        
+        def side_effect_function(query):
+            if ('==' not in query.hashval): return l
+            return [patron_data]
+
+        db_mock = Mock()
+        db_mock.search = Mock(side_effect=side_effect_function)
+        self.db_interface.db.close() # close "real" db before swapping mock in
+        self.db_interface.db = db_mock
+        self.assertEqual(self.db_interface.retrieve_patron("memberID").__dict__, patron_data)
 
     def test_db_filename(self):
         self.assertEqual(self.db_interface.DATABASE_FILE, 'db.json')
